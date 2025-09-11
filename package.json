@@ -1,0 +1,15 @@
+{
+  "name": "123",
+  "version": "1.0.0",
+  "description": "cool project",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node script.js"
+  },
+  "author": "misha",
+  "license": "ISC",
+  "dependencies": {
+    "moments": "^0.0.2"
+  }
+}
