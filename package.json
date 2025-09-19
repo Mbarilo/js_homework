@@ -10,6 +10,7 @@
   "author": "misha",
   "license": "ISC",
   "dependencies": {
+    "express": "^5.1.0",
     "moments": "^0.0.2"
   }
 }

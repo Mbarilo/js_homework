@@ -1,14 +1,18 @@
-const moment = require('moment');
+const moment = require("moment");
+const express = require("express");
 
-function getDate(){
-    const nowDate = moment();
-    console.log(nowDate.format("YYYY/DD/MM HH:mm:ss"));
-  }
-getDate();
+const app = express();
+const PORT = 8000;
 
-
-function getCurrentWeekday() {
-    const day = moment().format("dddd");
-    console.log(day);
+function getDate() {
+  const nowDate = moment();
+  return nowDate.format("YYYY/DD/MM HH:mm:ss");
 }
-getCurrentWeekday();
+
+app.get("/timestamp", (req, res) => {
+  res.json({ timestamp: getDate()});
+});
+
+app.listen(PORT, () => {
+  console.log(`Сервер запущен: http://localhost:${PORT}`);
+});
