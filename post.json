@@ -19,5 +19,19 @@
         "description": "123",
         "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsornMpletzGj3De7uR-yhuyWJMZo1Vo0ezA&s",
         "likes": "1"
+      },
+      {
+        "id": 4,
+        "title": "Четвертий пост",
+        "description": "123",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsornMpletzGj3De7uR-yhuyWJMZo1Vo0ezA&s",
+        "likes": "1"
+      },
+      {
+        "id": 5,
+        "title": "П'ятий пост",
+        "description": "123",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsornMpletzGj3De7uR-yhuyWJMZo1Vo0ezA&s",
+        "likes": "1"
       }
 ]
