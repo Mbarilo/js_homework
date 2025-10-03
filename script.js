@@ -121,6 +121,13 @@ app.post("/posts", async (req, res) => {
       likes: "0",
     };
 
+    const urlValid = /^(http|https):\/\/[^ "]+$/;
+    if (!image || typeof image !== "string" || !urlValid.test(image)) {
+      return res
+        .status(422)
+        .json("Поле 'image' обов'язкове і має бути");
+    }
+
     posts.push(newPost);
 
     await fs.writeFile(filePath, JSON.stringify(posts, null, 2), "utf-8");
