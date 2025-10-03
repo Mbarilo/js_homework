@@ -1,10 +1,11 @@
 const moment = require("moment");
 const express = require("express");
-const fs = require("fs");
+const fs = require("fs/promises");
 const path = require("path");
 
 const app = express();
 const PORT = 8000;
+app.use(express.json());
 
 function getDate() {
   const nowDate = moment();
@@ -96,6 +97,39 @@ app.get("/users/:id", (req, res) => {
 
     res.json(result);
   });
+});
+
+app.post("/posts", async (req, res) => {
+  try {
+    const { title, description, image } = req.body;
+    if (!title || !description || !image) {
+      return res
+        .status(422)
+        .json("У поста должно быть title, description и image");
+    }
+
+    const filePath = path.join(__dirname, "post.json");
+
+    const data = await fs.readFile(filePath, "utf-8");
+    const posts = JSON.parse(data);
+
+    const newPost = {
+      id: posts.length ? posts[posts.length - 1].id + 1 : 1,
+      title,
+      description,
+      image,
+      likes: "0",
+    };
+
+    posts.push(newPost);
+
+    await fs.writeFile(filePath, JSON.stringify(posts, null, 2), "utf-8");
+
+    res.json(newPost);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Ошибка сервера");
+  }
 });
 
 app.listen(PORT, () => {
