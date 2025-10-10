@@ -1,23 +1,32 @@
-const postService = require("./post.service");
+import { Request, Response } from "express";
+import postService from "./post.service";
 
 const postController = {
-  async getAllPosts(req, res) {
+  async getAllPosts(req: Request, res: Response): Promise<void> {
     try {
       const { skip, take } = req.query;
-      const posts = await postService.getAll(skip, take);
+      const skipNumber = typeof skip === "string" ? parseInt(skip, 10) : undefined;
+      const takeNumber = typeof take === "string" ? parseInt(take, 10) : undefined;
+      const posts = await postService.getAll(skipNumber, takeNumber);
       res.json(posts);
     } catch (err) {
       res.status(500).json("Помилка сервера");
     }
   },
 
-  async getPostById(req, res) {
+  async getPostById(req: Request, res: Response): Promise<void> {
     try {
       const id = Number(req.params.id);
-      if (Number.isNaN(id)) return res.status(400).json("ID має бути числом");
+      if (Number.isNaN(id)) {
+        res.status(400).json("ID має бути числом");
+        return;
+      }
 
       const post = await postService.getById(id);
-      if (!post) return res.status(404).json("Пост не знайдено");
+      if (!post) {
+        res.status(404).json("Пост не знайдено");
+        return;
+      }
 
       res.json(post);
     } catch (err) {
@@ -25,14 +34,15 @@ const postController = {
     }
   },
 
-  async createPost(req, res) {
+  async createPost(req: Request, res: Response): Promise<void> {
     try {
       const { title, description, image } = req.body;
 
       if (!title || !description || !image) {
-        return res
+        res
           .status(422)
           .json("У поста должно быть title, description и image");
+        return;
       }
 
       const newPost = await postService.create({ title, description, image });
@@ -44,4 +54,4 @@ const postController = {
   },
 };
 
-module.exports = postController;
+export default postController;
