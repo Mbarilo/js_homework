@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import postService from "./post.service";
+import {UpdatePostData } from "./post.types";
 
 const postController = {
   async getAllPosts(req: Request, res: Response): Promise<void> {
@@ -47,6 +48,45 @@ const postController = {
 
       const newPost = await postService.create({ title, description, image });
       res.status(201).json(newPost);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Помилка сервера");
+    }
+  },
+  async updatePost(req: Request, res: Response): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) {
+        res.status(400).json("ID має бути числом");
+        return;
+      }
+
+      const data: UpdatePostData = req.body;
+
+      if (data.title && typeof data.title !== "string") {
+        res.status(400).json("title має бути рядком");
+        return;
+      }
+      if (data.description && typeof data.description !== "string") {
+        res.status(400).json("description має бути рядком");
+        return;
+      }
+      if (data.image && typeof data.image !== "string") {
+        res.status(400).json("image має бути рядком");
+        return;
+      }
+      if (data.likes && typeof data.likes !== "string") {
+        res.status(400).json("likes має бути рядком");
+        return;
+      }
+
+      const updatedPost = await postService.update(id, data);
+      if (!updatedPost) {
+        res.status(404).json("Пост не знайдено");
+        return;
+      }
+
+      res.json(updatedPost);
     } catch (err) {
       console.error(err);
       res.status(500).json("Помилка сервера");

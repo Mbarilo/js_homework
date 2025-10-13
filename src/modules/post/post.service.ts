@@ -1,19 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-
-interface Post {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  likes: string;
-}
-
-interface CreatePostData {
-  title: string;
-  description: string;
-  image: string;
-}
+import { Post, CreatePostData, UpdatePostData } from "./post.types";
 
 const filePath = path.join(__dirname, "../../data/post.json");
 
@@ -61,7 +48,30 @@ const postService = {
     posts.push(newPost);
     await fs.writeFile(filePath, JSON.stringify(posts, null, 2), "utf-8");
     return newPost;
+
   },
+  async update(id: number, updateData: UpdatePostData): Promise<Post | null> {
+    const data = await fs.readFile(filePath, "utf-8");
+    const posts: Post[] = JSON.parse(data);
+  
+    const postIndex = posts.findIndex((p) => p.id === id);
+    if (postIndex === -1) return null;
+  
+    const post = posts[postIndex]!;
+  
+    const updatedPost: Post = {
+      id: post.id,
+      title: updateData.title ?? post.title,
+      description: updateData.description ?? post.description,
+      image: updateData.image ?? post.image,
+      likes: updateData.likes ?? post.likes,
+    };
+  
+    posts[postIndex] = updatedPost;
+    await fs.writeFile(filePath, JSON.stringify(posts, null, 2), "utf-8");
+  
+    return updatedPost;
+  }
 };
 
 export default postService;

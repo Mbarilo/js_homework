@@ -1,10 +1,10 @@
 [
   {
     "id": 1,
-    "title": "Перший пост",
-    "description": "123",
-    "image": "https://i5.walmartimages.com/asr/5cda3e7b-6615-46a6-a86f-2c679c51e987.b328a5beab7367239457a237eae6b011.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF",
-    "likes": "1"
+    "title": "Новий заголовок",
+    "description": "Оновлений опис",
+    "image": "https://123.com/",
+    "likes": "5"
   },
   {
     "id": 2,
@@ -36,10 +36,10 @@
   },
   {
     "id": 6,
-    "title": "Мій пост",
-    "description": "кнеинииннм",
-    "image": "https://123.com",
-    "likes": "0"
+    "title": "Новий заголовок",
+    "description": "Оновлений опис",
+    "image": "https://123.com/",
+    "likes": "5"
   },
   {
     "id": 7,
