@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import postService from "./post.service";
-import {UpdatePostData } from "./post.types";
+import {UpdatePostData, PostControllerContract } from "./post.types";
 
-const postController = {
+const postController: PostControllerContract = {
   async getAllPosts(req: Request, res: Response): Promise<void> {
     try {
       const { skip, take } = req.query;

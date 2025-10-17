@@ -1,10 +1,10 @@
 import fs from "fs/promises";
 import path from "path";
-import { Post, CreatePostData, UpdatePostData } from "./post.types";
+import { Post, CreatePostData, UpdatePostData, PostServiceContract} from "./post.types";
 
 const filePath = path.join(__dirname, "../../data/post.json");
 
-const postService = {
+const postService: PostServiceContract = {
   async getAll(skip?: string | number, take?: string | number): Promise<Post[]> {
     const data = await fs.readFile(filePath, "utf-8");
     const posts: Post[] = JSON.parse(data);
