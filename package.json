@@ -10,13 +10,18 @@
   "author": "misha",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.17.1",
     "express": "^5.1.0",
-    "moments": "^0.0.2"
+    "moments": "^0.0.2",
+    "prisma": "^6.17.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.7.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
