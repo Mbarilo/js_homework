@@ -5,7 +5,7 @@ export interface Post {
     title: string;
     description: string;
     image: string;
-    likes: string;
+    likes: number;
 }
 
 export type CreatePostData = Omit<Post, "id" | "likes">;

@@ -5,6 +5,8 @@ const prisma = new PrismaClient();
 async function main() {
   const tag1 = await prisma.tag.create({data:{ name: "Hello"}});
   const tag2 = await prisma.tag.create({data:{ name: "Hi"}});
+  const tag3 = await prisma.tag.create({data:{ name: "tralalelo"}});
+  const tag4 = await prisma.tag.create({data:{ name: "tralala"}});
 
   const post = await prisma.post.create({
     data: {
@@ -15,7 +17,9 @@ async function main() {
       tags: {
         create: [
           {tag:{connect:{id: tag1.id}}},
-          {tag:{connect:{id: tag2.id}}}
+          {tag:{connect:{id: tag2.id}}},
+          {tag:{connect:{id: tag3.id}}},
+          {tag:{connect:{id: tag4.id}}}
         ]
       }
     },

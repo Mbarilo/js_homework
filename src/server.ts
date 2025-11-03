@@ -2,6 +2,7 @@ import express, {Response } from "express";
 import moment from "moment";
 import postRouter from "./modules/post/post.router";
 import userRouter from "./modules/user/user.router";
+import tagRouter from "./modules/tag/tag.router";
 
 const app = express();
 const PORT = 8000;
@@ -15,6 +16,7 @@ app.get("/timestamp", (res: Response) => {
 
 app.use("/posts", postRouter);
 app.use("/users", userRouter);
+app.use("/tags", tagRouter);
 
 app.listen(PORT, () => {
   console.log(`Сервер ввімкнено: http://localhost:${PORT}`);

@@ -1,77 +1,27 @@
-import fs from "fs/promises";
-import path from "path";
-import { Post, CreatePostData, UpdatePostData, PostServiceContract} from "./post.types";
+import { CreatePostData, UpdatePostData } from "./post.types";
+/**import { IPostRepository } from "./post.repository.types";*/
+import postRepository from "./post.repository";
 
-const filePath = path.join(__dirname, "../../data/post.json");
-
-const postService: PostServiceContract = {
-  async getAll(skip?: string | number, take?: string | number): Promise<Post[]> {
-    const data = await fs.readFile(filePath, "utf-8");
-    const posts: Post[] = JSON.parse(data);
-
-    const skipNum = skip ? Number(skip) : 0;
-    const takeNum = take ? Number(take) : posts.length;
-
-    if (Number.isNaN(skipNum) || skipNum < 0) {
-      throw new Error("skip має бути невід’ємним числом");
-    }
-    if (Number.isNaN(takeNum) || takeNum < 0) {
-      throw new Error("take має бути невід’ємним числом");
-    }
-
-    return posts.slice(skipNum, skipNum + takeNum);
+const postService = {
+  getAll(skip?: number, take?: number) {
+    return postRepository.getAll(skip, take);
   },
 
-  async getById(id: number): Promise<Post | undefined> {
-    const data = await fs.readFile(filePath, "utf-8");
-    const posts: Post[] = JSON.parse(data);
-    return posts.find((p) => p.id === id);
+  getById(id: number) {
+    return postRepository.getById(id);
   },
 
-  async create({ title, description, image }: CreatePostData): Promise<Post> {
-    const data = await fs.readFile(filePath, "utf-8");
-    const posts: Post[] = JSON.parse(data);
-
-    const urlValid = /^(http|https):\/\/[^ "]+$/;
-    if (!urlValid.test(image)) {
-      throw new Error("Поле 'image' має бути коректною URL-адресою");
-    }
-
-    const newPost: Post = {
-      id: posts.length ? (posts[posts.length - 1]?.id ?? 0) + 1 : 1,
-      title,
-      description,
-      image,
-      likes: "0",
-    };
-
-    posts.push(newPost);
-    await fs.writeFile(filePath, JSON.stringify(posts, null, 2), "utf-8");
-    return newPost;
-
+  create(data: CreatePostData) {
+    return postRepository.create(data);
   },
-  async update(id: number, updateData: UpdatePostData): Promise<Post | null> {
-    const data = await fs.readFile(filePath, "utf-8");
-    const posts: Post[] = JSON.parse(data);
-  
-    const postIndex = posts.findIndex((p) => p.id === id);
-    if (postIndex === -1) return null;
-  
-    const post = posts[postIndex]!;
-  
-    const updatedPost: Post = {
-      id: post.id,
-      title: updateData.title ?? post.title,
-      description: updateData.description ?? post.description,
-      image: updateData.image ?? post.image,
-      likes: updateData.likes ?? post.likes,
-    };
-  
-    posts[postIndex] = updatedPost;
-    await fs.writeFile(filePath, JSON.stringify(posts, null, 2), "utf-8");
-  
-    return updatedPost;
-  }
+
+  update(id: number, data: UpdatePostData) {
+    return postRepository.update(id, data);
+  },
+
+  delete(id: number) {
+    return postRepository.delete(id);
+  },
 };
 
 export default postService;
