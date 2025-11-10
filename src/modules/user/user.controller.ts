@@ -2,37 +2,23 @@ import { Request, Response } from "express";
 import userService from "./user.service";
 
 const userController = {
-  async getAllUsers(res: Response): Promise<void> {
+  async register(req: Request, res: Response): Promise<void> {
     try {
-      const users = await userService.getAll();
-      res.json(users);
-    } catch (err) {
-      res.status(500).json("Помилка сервера");
+      const { email, password, name } = req.body;
+      const user = await userService.register(email, password, name);
+      res.status(201).json(user);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
   },
 
-  async getUserById(req: Request, res: Response): Promise<void> {
+  async login(req: Request, res: Response): Promise<void> {
     try {
-      const id = Number(req.params.id);
-      if (Number.isNaN(id)) {
-        res.status(400).json("ID має бути числом");
-        return;
-      }
-
-      const fields = req.query.fields
-        ? String(req.query.fields).split(",")
-        : null;
-
-      const user = await userService.getById(id, fields);
-
-      if (!user) {
-        res.status(404).json("Юзера не знайдено");
-        return;
-      }
-
+      const { email, password } = req.body;
+      const user = await userService.login(email, password);
       res.json(user);
-    } catch (err) {
-      res.status(500).json("Помилка сервера");
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
   },
 };

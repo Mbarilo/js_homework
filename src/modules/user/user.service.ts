@@ -1,37 +1,28 @@
-import { promises as fs } from "fs";
-import path from "path";
+import { PrismaClient } from "@prisma/client";
 
-const filePath = path.join(__dirname, "../../data/users.json");
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  [key: string]: any;
-}
+const prisma = new PrismaClient();
 
 const userService = {
-  async getAll(): Promise<User[]> {
-    const data = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(data) as User[];
+  async register(email: string, password: string, name?: string) {
+    const registeredUser = await prisma.user.findUnique({ where: { email } });
+    if (registeredUser) throw new Error("Пользователь уже зарегестрирован");
+
+    const user = await prisma.user.create({
+      data: { email,
+         password,
+          name: name ?? null },
+    });
+
+    return { id: user.id, email: user.email, name: user.name };
   },
 
-  async getById(id: number, fields?: string[] | null): Promise<User | Record<string, any> | null> {
-    const data = await fs.readFile(filePath, "utf-8");
-    const users: User[] = JSON.parse(data);
-    const user = users.find((u) => u.id === id);
-    if (!user) return null;
-
-    if (!fields) return user;
-
-    const filtered: Record<string, any> = {};
-    for (const field of fields) {
-      if (user[field] !== undefined) {
-        filtered[field] = user[field];
-      }
+  async login(email: string, password: string) {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || user.password !== password) {
+      throw new Error("Неверный rmail или пароль");
     }
 
-    return filtered;
+    return { id: user.id, email: user.email, name: user.name };
   },
 };
 
