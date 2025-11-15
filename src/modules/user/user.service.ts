@@ -1,29 +1,87 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { env } from "../../config/env";
 
-const prisma = new PrismaClient();
+export class UserService {
+  async register({
+    email,
+    password,
+    firstName,
+    secondName,
+    avatar,
+  }: {
+    email: string;
+    password: string;
+    firstName: string;
+    secondName: string;
+    avatar: string;
+  }) {
+    const existing = await prisma.user.findUnique({ where: { email } });
 
-const userService = {
-  async register(email: string, password: string, name?: string) {
-    const registeredUser = await prisma.user.findUnique({ where: { email } });
-    if (registeredUser) throw new Error("Пользователь уже зарегестрирован");
-
-    const user = await prisma.user.create({
-      data: { email,
-         password,
-          name: name ?? null },
-    });
-
-    return { id: user.id, email: user.email, name: user.name };
-  },
-
-  async login(email: string, password: string) {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user || user.password !== password) {
-      throw new Error("Неверный rmail или пароль");
+    if (existing) {
+      throw new Error("Пользователь с таким email уже существует");
     }
 
-    return { id: user.id, email: user.email, name: user.name };
-  },
-};
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-export default userService;
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        firstName,
+        secondName,
+        avatar,
+      },
+    });
+
+    const token = jwt.sign({ id: user.id }, env.JWT_SECRET);
+
+    return { token };
+  }
+
+  async login(email: string, password: string) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new Error("Неверный email или пароль");
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new Error("Неверный email или пароль");
+    }
+
+    const token = jwt.sign({ id: user.id }, env.JWT_SECRET);
+
+    return { token };
+  }
+
+  async me(token: string) {
+    try {
+      const decoded = jwt.verify(token, env.JWT_SECRET) as { id: number };
+
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.id },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          secondName: true,
+          avatar: true,
+          isAdmin: true,
+        },
+      });
+
+      if (!user) throw new Error("Пользователь не найден");
+
+      return user;
+    } catch {
+      throw new Error("Неверный или просроченный токен");
+    }
+  }
+}
+
+export default new UserService;
