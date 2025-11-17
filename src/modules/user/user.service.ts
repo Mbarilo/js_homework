@@ -59,28 +59,21 @@ export class UserService {
     return { token };
   }
 
-  async me(token: string) {
-    try {
-      const decoded = jwt.verify(token, env.JWT_SECRET) as { id: number };
-
-      const user = await prisma.user.findUnique({
-        where: { id: decoded.id },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          secondName: true,
-          avatar: true,
-          isAdmin: true,
-        },
-      });
-
-      if (!user) throw new Error("Пользователь не найден");
-
-      return user;
-    } catch {
-      throw new Error("Неверный или просроченный токен");
-    }
+  async me(id: number) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        secondName: true,
+        avatar: true,
+        isAdmin: true,
+      },
+    });
+  
+    if (!user) throw new Error("Пользователь не найден");
+    return user;
   }
 }
 

@@ -25,19 +25,13 @@ export class UserController {
 
   async me(req: Request, res: Response) {
     try {
-      const token = req.headers.authorization?.split(" ")[1];
-  
-      if (!token) {
-        return res.status(401).json({ message: "Token missing" });
-      }
-  
-      const user = await userService.me(token);
+      const userId = (req as any).user.id;
+      const user = await userService.me(userId);
       return res.json(user);
-  
     } catch (e: any) {
       return res.status(401).json({ message: e.message });
     }
-  }  
+  }
 }
 
 export default UserController
