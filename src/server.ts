@@ -1,5 +1,5 @@
-import express, {Response } from "express";
-import moment from "moment";
+import express from "express";
+import cors from "cors";
 import postRouter from "./modules/post/post.router";
 import userRouter from "./modules/user/user.router";
 import tagRouter from "./modules/tag/tag.router";
@@ -7,12 +7,13 @@ import tagRouter from "./modules/tag/tag.router";
 const app = express();
 const PORT = 8000;
 
-app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:8000",
+  })
+);
 
-app.get("/timestamp", (res: Response) => {
-  const nowDate = moment();
-  res.json({ timestamp: nowDate.format("YYYY/DD/MM HH:mm:ss") });
-});
+app.use(express.json());
 
 app.use("/posts", postRouter);
 app.use("/users", userRouter);
