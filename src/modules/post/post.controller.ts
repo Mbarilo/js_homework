@@ -17,19 +17,64 @@ const postController: PostControllerContract = {
 
   async getPostById(req: Request, res: Response): Promise<void> {
     try {
+
+      const included = req.query.include;
+
+      const includeArray: string[] = Array.isArray(included)
+        ? included.filter((item): item is string => typeof item === "string")
+        : typeof included === "string"
+        ? [included]
+        : [];
       const id = Number(req.params.id);
       if (Number.isNaN(id)) {
         res.status(400).json("ID має бути числом");
         return;
       }
-
-      const post = await postService.getById(id);
+  
+      const post = includeArray.length
+        ? await postService.getByIdWithInclude(id, includeArray)
+        : await postService.getById(id);
+  
       if (!post) {
         res.status(404).json("Пост не знайдено");
         return;
       }
-
+  
       res.json(post);
+    } catch (err) {
+      res.status(500).json("Помилка сервера");
+    }
+  },
+
+  async likePost(req: Request, res: Response): Promise<void> {
+    try {
+      const postId = Number(req.params.postId);
+      const userId = Number(req.params.userId);
+  
+      if (Number.isNaN(postId) || Number.isNaN(userId)) {
+        res.status(400).json("postId та userId мають бути числами");
+        return;
+      }
+  
+      const like = await postService.like(postId, userId);
+      res.json(like);
+    } catch (err) {
+      res.status(500).json("Помилка сервера");
+    }
+  },
+  
+  async unlikePost(req: Request, res: Response): Promise<void> {
+    try {
+      const postId = Number(req.params.postId);
+      const userId = Number(req.params.userId);
+  
+      if (Number.isNaN(postId) || Number.isNaN(userId)) {
+        res.status(400).json("postId та userId мають бути числами");
+        return;
+      }
+  
+      await postService.unlike(postId, userId);
+      res.status(204).send();
     } catch (err) {
       res.status(500).json("Помилка сервера");
     }

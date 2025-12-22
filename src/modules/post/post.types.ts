@@ -22,4 +22,6 @@ export interface PostControllerContract{
     getPostById(req: Request, res: Response): Promise<void>;
     createPost(req: Request, res: Response): Promise<void>;
     updatePost(req: Request, res: Response): Promise<void>;
+    likePost(req: Request, res: Response): Promise<void>;
+    unlikePost(req: Request, res: Response): Promise<void>;
 }
